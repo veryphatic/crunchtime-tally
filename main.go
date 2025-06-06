@@ -22,11 +22,12 @@ package main
 import (
 	"fmt"
 	"math"
+	"net"
 	"strconv"
 	"strings"
 	"sync"
 
-	"github.com/hypebeast/go-osc/osc"
+	"github.com/veryphatic/go-osc/osc"
 )
 
 type Vote int
@@ -117,17 +118,24 @@ func notifyQlab(votes [12]Vote) {
 }
 
 func ackMessage(msg *osc.Message) {
-	// Let the sensor know that we got the message.
-	from := strings.Split(msg.Address, ":")
-	port, err := strconv.Atoi(from[1])
-	if err != nil {
-		port = 53001
+	// Let the sensor know that we got the message using the wrapped osc lib
+	addr := msg.Sender
+	if addr == nil {
+		fmt.Println("No sender info")
+		return
 	}
 
-	client := osc.NewClient(from[0], port)
+	udpAddr, ok := addr.(*net.UDPAddr)
+	if !ok {
+		fmt.Println("Sender is not a UDP address")
+		return
+	}
+
+	fmt.Printf("Address: %s, Port: %d\n", udpAddr.IP.String(), udpAddr.Port)
+
+	client := osc.NewClient(udpAddr.IP.String(), udpAddr.Port)
 	client.Send(osc.NewMessage("/ack"))
 
-	// Forward the message we recieved to the Qlab
 	client = osc.NewClient("localhost", 53000)
 	client.Send(msg)
 }
@@ -191,7 +199,8 @@ func reset(msg *osc.Message) {
 func main() {
 	fmt.Println("Starting Tally v14")
 
-	addr := "10.0.1.2:8765"
+	//addr := "10.0.1.2:8765" // <- counterpilot
+	addr := "192.168.1.169:8765" // <- macbook air
 	d := osc.NewStandardDispatcher()
 
 	for i := 1; i <= 36; i++ {
