@@ -1,5 +1,5 @@
-module github.com/cfreeman/crunchtime-tally
+module github.com/veryphatic/crunchtime-tally
 
 go 1.20
 
-require github.com/hypebeast/go-osc v0.0.0-20220308234300-cec5a8a1e5f5
+require github.com/veryphatic/go-osc v0.0.0-20250606051723-2bd7abce1b8c
