@@ -20,13 +20,17 @@
 package main
 
 import (
+	"flag"
 	"fmt"
+	"log"
 	"math"
 	"net"
+	"os"
 	"strconv"
 	"strings"
 	"sync"
 
+	"github.com/joho/godotenv"
 	"github.com/veryphatic/go-osc/osc"
 )
 
@@ -197,10 +201,24 @@ func reset(msg *osc.Message) {
 }
 
 func main() {
-	fmt.Println("Starting Tally v14")
 
-	//addr := "10.0.1.2:8765" // <- counterpilot
-	addr := "192.168.1.169:8765" // <- macbook air
+	godotenv.Load()
+
+	addr := flag.String("addr", "", "UDP address to listen on, e.g., 10.10.10.10:8765")
+	flag.Parse()
+
+	if *addr == "" {
+		envAddr := os.Getenv("TALLY_ADDR")
+		if envAddr != "" {
+			*addr = envAddr
+		} else {
+			log.Fatal("No address provided via --addr flag or TALLY_ADDR environment variable.")
+		}
+	}
+
+	fmt.Println("Starting Tally v15")
+	fmt.Printf("ipAddress: %s\n", *addr)
+
 	d := osc.NewStandardDispatcher()
 
 	for i := 1; i <= 36; i++ {
@@ -216,8 +234,13 @@ func main() {
 	d.AddMsgHandler("/reset", reset)
 
 	server := &osc.Server{
-		Addr:       addr,
+		Addr:       *addr,
 		Dispatcher: d,
 	}
-	server.ListenAndServe()
+
+	err := server.ListenAndServe()
+
+	if err != nil {
+		fmt.Println("Server error:", err)
+	}
 }

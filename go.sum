@@ -1,2 +1,4 @@
+github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
+github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/veryphatic/go-osc v0.0.0-20250606051723-2bd7abce1b8c h1:83cSOkkgIcDa/TVXDSQlGrAYC8sTsoIqbzJAAGLFPrU=
 github.com/veryphatic/go-osc v0.0.0-20250606051723-2bd7abce1b8c/go.mod h1:Auqv+4xXV2LGCai+l1qgN+d6V95g5d/AjPtUyTz3jdo=
